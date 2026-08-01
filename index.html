@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản thảo Kinh tế - Triết học 1844 — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EDE6D2;
+    --paper-2: #E4DAC0;
+    --paper-3: #F7F2E6;
+    --ink: #211D16;
+    --ink-soft: #5B5344;
+    --ink-faint: #8A8168;
+    --red: #8C2F26;
+    --red-dim: #B9615A;
+    --navy: #223652;
+    --gold: #8A6A24;
+    --gold-bg: #F1E6C6;
+    --green: #3F5A3D;
+    --line: #C9BEA0;
+    --line-soft: #DCD3B9;
+    --shadow: 0 3px 14px rgba(33,29,22,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:26px 22px 90px;}
+  a{color:var(--red);}
+
+  header{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:18px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--red);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .titlebar{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;}
+  h1{font-family:'Noto Serif',serif;font-weight:700;font-size:32px;line-height:1.15;margin:0 0 6px;letter-spacing:-.01em;}
+  h1 em{font-style:italic;color:var(--red);}
+  .subtitle{font-size:14px;color:var(--ink-soft);margin:0;max-width:600px;line-height:1.5;}
+  .glossbtn{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.03em;
+    background:var(--ink);color:var(--paper-3);border:none;padding:10px 16px;
+    cursor:pointer;white-space:nowrap;
+  }
+  .glossbtn:hover{background:var(--red);}
+  .progress{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);}
+
+  /* ARGUMENT FLOW */
+  .flow{margin:20px 0 24px;}
+  .flow-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);margin-bottom:8px;}
+  .flow-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .flow-pill{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+    border:1px solid var(--line);background:var(--paper-3);
+    padding:6px 10px;cursor:pointer;color:var(--ink-soft);
+    transition:all .12s ease;
+  }
+  .flow-pill:hover{border-color:var(--ink);color:var(--ink);}
+  .flow-pill.active{background:var(--ink);color:var(--paper-3);border-color:var(--ink);}
+  .flow-arrow{color:var(--ink-faint);align-self:center;font-size:11px;}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start;}
+  .sidebar{position:sticky;top:16px;}
+  .grp{margin-bottom:14px;}
+  .grp-title{
+    font-family:'Noto Serif',serif;font-weight:700;font-size:12.5px;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--ink);
+    padding:6px 0;border-bottom:1px solid var(--ink);margin-bottom:4px;
+  }
+  .grp-pages{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint);font-weight:400;text-transform:none;letter-spacing:0;}
+  .navitem{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    padding:7px 8px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ink-soft);
+    cursor:pointer;border-left:3px solid transparent;line-height:1.35;
+  }
+  .navitem:hover{background:var(--paper-2);color:var(--ink);}
+  .navitem.active{background:var(--paper-3);border-left-color:var(--red);color:var(--ink);font-weight:600;box-shadow:var(--shadow);}
+  .navitem .np{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-faint);display:block;margin-top:1px;}
+  .navitem.read::before{content:"✓ ";color:var(--green);font-weight:700;}
+
+  /* MAIN PANEL */
+  .panel{background:var(--paper-3);border:1px solid var(--line);box-shadow:var(--shadow);}
+  .p-head{padding:22px 30px 18px;border-bottom:2px solid var(--ink);}
+  .p-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .p-head h2{font-family:'Noto Serif',serif;font-size:26px;margin:0 0 8px;line-height:1.2;}
+  .p-teaser{font-size:14.5px;color:var(--ink-soft);line-height:1.6;margin:0;max-width:760px;}
+  .p-body{padding:22px 30px 34px;max-width:800px;}
+
+  .p-body h4{
+    font-family:'Noto Serif',serif;font-size:16px;font-weight:700;
+    margin:26px 0 10px;padding-top:14px;border-top:1px solid var(--line-soft);
+    color:var(--ink);
+  }
+  .p-body h4:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .p-body p{font-size:14px;line-height:1.75;color:var(--ink);margin:0 0 13px;}
+  .p-body ul, .p-body ol{margin:0 0 13px;padding-left:20px;}
+  .p-body li{font-size:14px;line-height:1.7;color:var(--ink);margin-bottom:7px;}
+  .p-body b{color:var(--ink);}
+  .p-body .mnum{font-family:'IBM Plex Mono',monospace;color:var(--red);font-weight:600;}
+
+  .box{margin:16px 0;padding:14px 18px;border:1px solid var(--line);background:var(--paper-2);}
+  .box-concepts{border-left:4px solid var(--navy);}
+  .box-concepts .box-title{color:var(--navy);}
+  .box-quotes{border-left:4px solid var(--gold);background:var(--gold-bg);}
+  .box-quotes .box-title{color:var(--gold);}
+  .box-sig{border-left:4px solid var(--green);}
+  .box-sig .box-title{color:var(--green);}
+  .box-title{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:9px;}
+  .concept{margin-bottom:9px;}
+  .concept:last-child{margin-bottom:0;}
+  .concept .cterm{font-weight:700;font-size:13px;color:var(--ink);}
+  .concept .cdef{font-size:13px;color:var(--ink-soft);line-height:1.55;}
+  .quote{font-size:13.5px;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:8px;padding-left:12px;border-left:2px solid var(--gold);}
+  .quote:last-child{margin-bottom:0;}
+  .quote .qsrc{display:block;font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint);margin-top:3px;}
+  .p-body .box p{margin-bottom:6px;font-size:13.5px;}
+
+  .navbtns{display:flex;justify-content:space-between;padding:16px 30px;border-top:1px solid var(--line);}
+  .navbtn{font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:none;border:1px solid var(--ink);padding:8px 14px;cursor:pointer;color:var(--ink);}
+  .navbtn:hover{background:var(--ink);color:var(--paper-3);}
+  .navbtn:disabled{opacity:.3;cursor:default;}
+  .navbtn:disabled:hover{background:none;color:var(--ink);}
+
+  /* GLOSSARY MODAL */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(33,29,22,.55);z-index:50;padding:40px 20px;overflow-y:auto;}
+  .modal-bg.open{display:block;}
+  .modal{max-width:920px;margin:0 auto;background:var(--paper-3);border:1px solid var(--ink);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-bottom:2px solid var(--ink);}
+  .modal-head h3{font-family:'Noto Serif',serif;font-size:20px;margin:0;}
+  .modal-close{background:none;border:1px solid var(--ink);width:30px;height:30px;cursor:pointer;font-size:15px;}
+  .modal-sub{padding:10px 26px 0;font-size:12.5px;color:var(--ink-faint);}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:20px 26px 26px;}
+  .flashcard{
+    perspective:1000px;height:130px;cursor:pointer;
+  }
+  .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);padding:14px;display:flex;align-items:center;justify-content:center;text-align:center;}
+  .fc-front{background:var(--navy);color:var(--paper-3);font-family:'Noto Serif',serif;font-weight:600;font-size:15px;}
+  .fc-back{background:var(--paper-2);transform:rotateY(180deg);font-size:12px;line-height:1.5;color:var(--ink-soft);}
+
+  footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;line-height:1.6;}
+
+  @media (max-width:820px){
+    .layout{grid-template-columns:1fr;}
+    .sidebar{position:static;}
+    h1{font-size:24px;}
+    .p-head, .p-body{padding-left:18px;padding-right:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">
+      <span>C.MÁC · TẬP 42 · TOÀN TẬP C.MÁC VÀ PH.ĂNGGHEN · NXB CHÍNH TRỊ QUỐC GIA, 2000 · TR.65–249</span>
+      <span class="progress" id="progressLabel">0/11 mục đã xem</span>
+    </div>
+    <div class="titlebar">
+      <div>
+        <h1>Bản thảo Kinh tế - <em>Triết học</em> năm 1844</h1>
+        <p class="subtitle">Dashboard tổng kết kiến thức chi tiết — 3 bản thảo, 11 mục, đối chiếu trực tiếp với văn bản gốc (OCR toàn văn tr.65–249).</p>
+      </div>
+      <button class="glossbtn" onclick="openGlossary()">⚑ BẢNG THUẬT NGỮ (20 flashcard)</button>
+    </div>
+  </header>
+
+  <div class="flow">
+    <div class="flow-label">Sơ đồ lập luận — bấm để đến mục tương ứng</div>
+    <div class="flow-row" id="flowRow"></div>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="panel" id="panel"></div>
+  </div>
+
+  <footer>
+    Nguồn: C.Mác và Ph.Ăngghen Toàn tập, Tập 42, tr.65–249 (bản dịch từ tiếng Nga, NXB Chính trị Quốc gia – Sự thật, Hà Nội, 2000) · Trích dẫn trong dashboard đã được diễn giải/rút gọn, đối chiếu số trang gốc · Cấu trúc và nội dung xác minh qua OCR toàn văn bản dịch tiếng Việt.
+  </footer>
+</div>
+
+<!-- GLOSSARY MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Bảng thuật ngữ cốt lõi</h3>
+      <button class="modal-close" onclick="closeGlossary()">✕</button>
+    </div>
+    <div class="modal-sub">Bấm vào thẻ để lật xem định nghĩa · 20 khái niệm xuyên suốt toàn bộ Bản thảo 1844</div>
+    <div class="card-grid" id="cardGrid"></div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+{ id:'preface', grp:'g0', title:'Lời tựa', page:'67–71',
+  teaser:'Mác giải thích lý do và giới hạn của tác phẩm, nguồn tư liệu đã dùng, đồng thời đánh giá Phoi-ơ-bắc là người duy nhất thực sự vượt qua được Hê-ghen.',
+  body:`
+  <h4>Bối cảnh ra đời</h4>
+  <p>Mác mở đầu bằng việc nhắc lại lời hứa đã đưa ra trên tạp chí <i>Deutsch-Französische Jahrbücher</i>: phê phán khoa học pháp quyền và nhà nước dưới hình thức phê phán triết học pháp quyền của Hê-ghen. Nhưng khi chuẩn bị bản thảo để in, ông nhận thấy kết hợp phê phán tư duy tư biện với phê phán bản thân từng đối tượng cụ thể là "hoàn toàn không thích đáng" — vừa cản trở mạch trình bày, vừa làm khó hiểu. Ông quyết định tách thành nhiều cuốn sách nhỏ riêng biệt (pháp quyền, đạo đức, chính trị...), và dành một tác phẩm khác để trình bày mối liên hệ nội tại của toàn bộ hệ thống. <b>Trong tác phẩm này</b>, quan hệ giữa kinh tế chính trị học với nhà nước, pháp quyền, đạo đức chỉ được đề cập trong chừng mực bản thân kinh tế chính trị học đụng chạm tới chúng.</p>
+  <h4>Nguồn tư liệu và ảnh hưởng</h4>
+  <p>Ngoài các tác phẩm của những người xã hội chủ nghĩa Pháp và Anh, Mác đặc biệt nhắc tới hai nguồn tiếng Đức: các bài luận của Hét-xơ trong tập <i>"Hai mươi mốt tờ"</i>, và bài <i>"Lược thảo phê phán khoa kinh tế chính trị"</i> của Ăng-ghen đăng trên <i>Deutsch-Französische Jahrbücher</i> — chính là văn bản Mác đã tóm tắt ngay trước tác phẩm này.</p>
+  <h4>Đánh giá Phoi-ơ-bắc</h4>
+  <p>Đây là đoạn quan trọng nhất của Lời tựa về mặt triết học. Mác khẳng định: sự phê phán nhân bản chủ nghĩa và tự nhiên chủ nghĩa có tính chất tích cực <b>"chỉ bắt đầu từ Phoi-ơ-bắc"</b>. Theo Mác, sau "Hiện tượng học" và "Lô-gích học" của Hê-ghen, các tác phẩm của Phoi-ơ-bắc là những tác phẩm duy nhất chứa đựng một cuộc cách mạng lý luận chân chính — dù ông "càng ít làm rùm beng" thì ảnh hưởng của chúng càng sâu sắc, vững chắc.</p>
+  <h4>Phê phán "phê phán có tính phê phán"</h4>
+  <p>Xen giữa các đoạn ca ngợi Phoi-ơ-bắc là một đợt công kích gay gắt (được đóng ngoặc nhọn trong bản thảo, ngụ ý Mác định gạch bỏ khi biên tập) nhắm vào giới "nhà thần học phê phán" — ám chỉ B. Bau-ơ và nhóm Hê-ghen trẻ — những người tự xưng đã vượt qua triết học nhưng trên thực tế vẫn bí mật vay mượn phép biện chứng Hê-ghen mà không dám thừa nhận, đồng thời cố tình im lặng trước phát hiện của Phoi-ơ-bắc.</p>
+  <h4>Vì sao chương cuối cần thiết</h4>
+  <p>Mác giải thích lý do đưa chương cuối cùng — phê phán phép biện chứng và triết học Hê-ghen nói chung — vào tác phẩm: đối lập với "nhà thần học phê phán hiện đại", vì "một công tác như thế cho đến nay vẫn chưa hoàn thành".</p>
+  `,
+  concepts:[
+    {t:'Phê phán có tính phê phán', d:'Cách Mác châm biếm nhóm Bruno Bauer/Hê-ghen trẻ — tự cho mình là phê phán "thuần túy, tuyệt đối" trong khi vẫn bị giam trong lô-gích học Hê-ghen.'},
+    {t:'ex professo', d:'"Một cách chuyên môn" (tiếng La-tinh) — Mác dùng để giới hạn phạm vi bàn về nhà nước/pháp quyền: chỉ trong chừng mực bản thân kinh tế chính trị học đề cập.'}
+  ],
+  quotes:[
+    {q:'"Sự phê phán nhân bản chủ nghĩa và tự nhiên chủ nghĩa có tính chất tích cực chỉ bắt đầu từ Phoi-ơ-bắc."', s:'tr.68'},
+  ],
+  sig:'Lời tựa xác lập ngay từ đầu hai trục tư tưởng chi phối toàn bộ Bản thảo: (1) phương pháp phê phán kinh tế chính trị học bằng chính ngôn ngữ và tiền đề của nó, và (2) món nợ triết học với Phoi-ơ-bắc — nền tảng cho khái niệm "tha hóa" mà Mác sẽ khai triển ở các phần sau.'
+},
+{ id:'wages', grp:'g1', title:'Tiền công', page:'72–88',
+  teaser:'Tiền công bị quyết định bởi cuộc đấu tranh bất cân sức giữa tư bản và lao động; ngay cả ở trạng thái xã hội "có lợi nhất" cho công nhân, hậu quả vẫn là lao động cật lực, chết yểu và cạnh tranh khốc liệt.',
+  body:`
+  <h4>Tương quan lực lượng bất cân xứng</h4>
+  <p>Mác mở đầu bằng luận điểm cốt lõi: tiền công do cuộc đấu tranh đối địch giữa nhà tư bản và người công nhân quyết định, và <b>nhà tư bản nhất định thắng lợi</b> — vì nhà tư bản không có công nhân vẫn có thể sống lâu hơn công nhân không có nhà tư bản. Liên kết giữa các nhà tư bản là chuyện thông thường và hiệu quả; liên kết giữa công nhân thì bị cấm đoán và mang lại hậu quả xấu cho chính họ. Trích dẫn Adam Smith, Mác chỉ ra: tiền công thông thường chính là tiền công <i>thấp nhất</i> phù hợp với "tính người thông thường" — tức mức sống của một con vật.</p>
+  <h4>Ba trạng thái của xã hội</h4>
+  <p>Đây là phần lập luận chặt chẽ và giàu dữ liệu nhất của mục này — Mác xét địa vị người công nhân trong ba trạng thái xã hội có thể có:</p>
+  <ol>
+    <li><b>Xã hội suy thoái:</b> công nhân là người thiệt hại nặng nhất, vì "không một giai cấp nào thiệt thòi ghê gớm vì sự sa sút của phúc lợi xã hội như giai cấp công nhân".</li>
+    <li><b>Xã hội đang giàu lên</b> (trạng thái duy nhất "có lợi" cho công nhân): nhưng ngay cả ở đây, tiền công tăng buộc công nhân phải lao động cật lực hơn, hy sinh thời gian và tự do, rút ngắn tuổi thọ — điều mà Mác mỉa mai là "hoàn cảnh thuận lợi cho toàn bộ giai cấp công nhân" vì tạo ra nhu cầu lao động mới liên tục. Đồng thời, tích lũy tư bản làm tăng phân công lao động, biến công nhân thành cỗ máy phiến diện; cạnh tranh giữa các nhà tư bản dẫn tới tập trung tư bản — tư bản lớn nuốt tư bản nhỏ, một bộ phận nhà tư bản rơi xuống hàng ngũ công nhân, làm cạnh tranh giữa công nhân càng khốc liệt hơn.</li>
+    <li><b>Xã hội đạt đỉnh giàu có:</b> cả tiền công lẫn lợi tức tư bản đều rất thấp; cạnh tranh tìm việc giữa công nhân lớn đến mức tiền công bị ép xuống mức tối thiểu để duy trì dân số hiện có — "số vượt quá số lượng ấy nhất định phải chết".</li>
+  </ol>
+  <p>Từ đó Mác rút ra kết luận nổi tiếng: xã hội suy thoái → cùng khổ tăng lên; xã hội phồn vinh tăng → cùng khổ dạng phức tạp; xã hội giàu có nhất → cùng khổ <b>thường xuyên</b>. Vì kinh tế chính trị học (tức xã hội công dân do lợi ích riêng chi phối) tất yếu dẫn tới trạng thái giàu có nhất ấy, nên — theo lô-gích của chính nó — <b>"mục đích của kinh tế chính trị học là sự bất hạnh của xã hội".</b></p>
+  <h4>Mâu thuẫn ngay trong lý luận của các nhà kinh tế chính trị học</h4>
+  <p>Mác đối chiếu lý luận và thực tế của chính các nhà kinh tế học cổ điển: về lý luận, toàn bộ sản phẩm lao động thuộc về công nhân — nhưng thực tế công nhân chỉ nhận phần tối thiểu để tồn tại không phải như con người, mà như một công nhân, để duy trì <i>giai cấp</i> chứ không phải <i>loài người</i>. Trong khi địa tô của địa chủ "ăn không ngồi rồi" chiếm tới 1/3 sản phẩm ruộng đất và lợi nhuận nhà tư bản gấp đôi lợi tức tiền tệ, phần công nhân thu được "may ra chỉ đủ để cho trong bốn đứa con của anh ta, hai đứa phải chịu chết đói". Mác cũng dẫn số liệu từ Schulz (<i>Bewegung der Production</i>): ngày lao động ở Anh đã tăng lên 12–16 giờ/ngày trong khoảng 25 năm kể từ khi áp dụng máy móc tiết kiệm lao động.</p>
+  `,
+  concepts:[
+    {t:'Tiền công tối thiểu tự nhiên', d:'Theo Adam Smith (được Mác trích): mức đủ để duy trì sự sống của công nhân trong lúc lao động, cộng thêm chút ít để nuôi gia đình và duy trì "nòi giống công nhân".'},
+    {t:'Công nhân như hàng hóa', d:'Vì cầu về người điều tiết sản xuất ra người như với bất kỳ hàng hóa nào khác, sự tồn tại của công nhân bị quy về điều kiện tồn tại của hàng hóa.'},
+  ],
+  quotes:[
+    {q:'"Mục đích của kinh tế chính trị học là sự bất hạnh của xã hội."', s:'tr.79'},
+    {q:'"...trong bốn đứa con của anh ta, hai đứa phải chịu chết đói."', s:'tr.79'},
+  ],
+  sig:'Mục này thiết lập phương pháp đặc trưng của toàn bộ Bản thảo 1844: đứng hẳn trên lập trường của chính kinh tế chính trị học cổ điển (Smith, Say, Ricardo) và dùng chính logic của nó để phơi bày mâu thuẫn nội tại — chuẩn bị trực tiếp cho khái niệm "lao động bị tha hóa" ở cuối Bản thảo thứ nhất.'
+},
+{ id:'profit', grp:'g1', title:'Lợi nhuận của tư bản', page:'89–106',
+  teaser:'Tư bản là quyền sở hữu lao động của người khác dựa trên luật pháp chứ không phải phẩm chất cá nhân; động cơ duy nhất của nhà tư bản là lợi nhuận riêng, không quan tâm tới lợi ích xã hội.',
+  body:`
+  <h4>1) Tư bản là gì</h4>
+  <p>Mác dẫn Say: ngay cả khi tư bản không sinh ra từ cướp đoạt hay lừa bịp, thì vẫn cần luật pháp để "làm cho sự kế thừa trở nên thiêng liêng". Con người trở thành chủ sở hữu vốn sản xuất nhờ <b>luật pháp hiện hành</b> — chứ không nhờ phẩm chất cá nhân. Theo Smith, tư bản chẳng qua là <b>"lao động tích luỹ"</b> — một khối lượng lao động được dành làm dự trữ. Sức mạnh của nhà tư bản chính là sức mua của tư bản hắn nắm giữ, một sức mua "không có gì có thể chống lại nổi".</p>
+  <h4>2) Lợi nhuận của tư bản vận hành ra sao</h4>
+  <p>Mác trích dẫn dày đặc Adam Smith để dựng lại cơ chế hình thành lợi nhuận: lợi nhuận tỷ lệ với quy mô tư bản bỏ ra (không phải với công sức giám sát — người quản lý công xưởng lớn thường chỉ nhận lương cố định, không tỷ lệ với tư bản anh ta trông coi). Tỷ suất lợi nhuận thấp nhất phải luôn cao hơn mức đủ bù đắp tổn thất ngẫu nhiên; tỷ suất cao nhất có thể "nuốt" gần hết phần đáng lẽ thuộc về địa tô, chỉ để lại vừa đủ trả công lao động ở mức tối thiểu sinh tồn — Mác dẫn ví dụ cụ thể: nhân viên Công ty Đông Ấn ở Ben-gan. Ngoài ra, nhà tư bản còn giữ giá cả thị trường cao hơn giá tự nhiên nhờ: bí mật thương mại, bí mật công xưởng, độc quyền địa lý (rượu vang quý), hoặc độc quyền doanh nghiệp — Mác đặt câu hỏi mỉa mai: "Lừa người bằng cách giữ bí mật không phải là phi đạo đức hay sao?"</p>
+  <h4>3) Sự thống trị của tư bản đối với lao động và động cơ nhà tư bản</h4>
+  <p>Đây là điểm bản lề: Mác trích Smith để chỉ ra rằng động cơ <b>duy nhất</b> thúc đẩy nhà tư bản là lợi nhuận riêng của bản thân anh ta — "không bao giờ có ý nghĩ tính xem mỗi phương thức sử dụng tư bản sẽ đưa bao nhiêu lao động sản xuất vào hoạt động". Đáng chú ý, Mác nhấn mạnh một nghịch lý mà chính Smith đã ghi nhận: tỷ suất lợi nhuận tự nhiên <i>thấp</i> ở những nước giàu và <i>cao</i> ở những nước nghèo, cao nhất ở những nước "đang lao nhanh nhất đến sự phá sản hoàn toàn" — vì vậy, khác với lợi ích của địa chủ và công nhân, lợi ích của giai cấp tư bản kinh doanh <b>không gắn liền</b> với lợi ích chung của xã hội, thậm chí thường đối địch với lợi ích công chúng.</p>
+  <h4>4) Tích luỹ tư bản và cạnh tranh</h4>
+  <p>Vì lợi nhuận tỷ lệ thuận với quy mô tư bản, tư bản lớn tất yếu tích luỹ nhanh hơn tư bản nhỏ — ngay cả khi hoàn toàn không tính đến cạnh tranh chủ định. Cạnh tranh chỉ đẩy nhanh thêm xu hướng tập trung tư bản vào tay số ít vốn đã nằm sẵn trong bản chất của tư bản.</p>
+  `,
+  concepts:[
+    {t:'Tư bản = lao động tích luỹ', d:'Định nghĩa Mác mượn trực tiếp từ Adam Smith và dùng làm điểm tựa để phê phán: tư bản không phải một "vật" mà là một quan hệ xã hội — quyền chi huy lao động của người khác.'},
+    {t:'Lợi ích giai cấp tư bản đối lập lợi ích xã hội', d:'Điểm Mác đặc biệt nhấn mạnh (theo chính Smith): tỷ suất lợi nhuận cao nhất lại xuất hiện ở những nước nghèo/sắp phá sản — khác hẳn địa tô và tiền công.'},
+  ],
+  quotes:[
+    {q:'"Anh ta không bao giờ có ý nghĩ tính xem... sẽ tăng giá trị sản phẩm... đến mức nào."', s:'tr.94, theo Smith'},
+  ],
+  sig:'Mục này hoàn thiện bộ ba phạm trù cổ điển (tiền công – lợi nhuận – địa tô) trước khi Mác dùng chính chúng làm bệ phóng cho khái niệm lao động bị tha hóa. Việc vạch trần động cơ thuần túy vị lợi của tư bản, tách rời khỏi lợi ích xã hội, là bước chuẩn bị trực tiếp cho phê phán chế độ tư hữu nói chung.'
+},
+{ id:'rent', grp:'g1', title:'Địa tô', page:'107–125',
+  teaser:'Địa tô là giá cả độc quyền, "sản phẩm của tự nhiên" mà địa chủ chiếm đoạt không cần lao động; sở hữu ruộng đất phong kiến tất yếu tan rã thành một hình thức của tư bản.',
+  body:`
+  <h4>Địa tô bắt nguồn từ tước đoạt</h4>
+  <p>Mở đầu bằng trích dẫn Say: quyền của người sở hữu ruộng đất "bắt nguồn từ sự tước đoạt". Mác dẫn tiếp Smith: địa chủ, cũng như mọi người, "muốn gặt ở những nơi họ không gieo" và đòi địa tô ngay cả với sản phẩm tự nhiên của đất đai. Điểm mấu chốt: địa tô <b>không tỷ lệ</b> với công sức hay vốn cải tạo đất mà địa chủ thực sự bỏ ra — thậm chí phần cải tạo do chính vốn của người thuê đất thực hiện, khi ký lại khế ước, địa chủ vẫn thường đòi tăng địa tô như thể đó là công lao của mình.</p>
+  <h4>Hai ví dụ cụ thể Mác trích từ Smith</h4>
+  <p>Để minh hoạ tính chất "giá cả độc quyền thuần túy" của địa tô, Mác dẫn lại hai ví dụ sinh động của Smith: (1) cây rong biển (salicorne) mọc tự nhiên trên đá ở Scotland, bị ngập nước triều mỗi ngày hai lần, sản phẩm hoàn toàn không gắn với lao động con người — vậy mà địa chủ vẫn đòi địa tô như với đất trồng ngũ cốc; (2) quần đảo Sét-len, nơi địa tô được tính không chỉ theo đất mà theo cả khả năng khai thác hải sản ven bờ. Từ đó Mác trích kết luận của Smith: địa tô là "sản phẩm của những lực lượng tự nhiên" mà địa chủ nhượng lại quyền sử dụng — một khoản "chảy vào tay giai cấp đó một cách tự động", không đòi hỏi lao động hay tính toán.</p>
+  <h4>Ba giai cấp cơ bản và địa vị đặc biệt của địa chủ</h4>
+  <p>Mác nhấn mạnh nhận xét của Smith: trong ba giai cấp cơ bản của xã hội (địa chủ, nhà tư bản, công nhân), duy nhất thu nhập của giai cấp địa chủ <b>không đòi hỏi lao động, cũng không đòi hỏi lo lắng</b> — khác hẳn lợi nhuận (đòi hỏi quản lý, rủi ro) và tiền công (đòi hỏi lao động trực tiếp).</p>
+  <h4>Xu hướng tất yếu: ruộng đất tan rã thành tư bản</h4>
+  <p>Phần cuối mục chuyển sang phân tích lịch sử: nông nghiệp buộc phải tổ chức lại theo mô hình công nghiệp quy mô lớn; sở hữu ruộng đất phong kiến — cũng như công nghiệp dưới hình thức độc quyền hay cạnh tranh — đều "phải đi tới sự diệt vong không tránh khỏi". Ranh giới giữa địa chủ và nhà tư bản, giữa nông dân và công nhân công nghiệp dần biến mất; toàn xã hội tất yếu phân chia thành hai giai cấp: người sở hữu và công nhân không có sở hữu — đây chính là cầu nối trực tiếp dẫn sang mục "Lao động bị tha hoá".</p>
+  `,
+  concepts:[
+    {t:'Địa tô như giá cả độc quyền', d:'Không tỷ lệ với đầu tư cải tạo của địa chủ, mà tỷ lệ với mức người thuê đất có thể trả mà không bị lỗ — bản chất là một khoản khấu trừ mang tính độc quyền.'},
+    {t:'Sự hòa tan của sở hữu ruộng đất vào tư bản', d:'Luận điểm lịch sử của Mác: nông nghiệp quy mô lớn hóa khiến sở hữu ruộng đất phong kiến dần mang bản chất của tư bản, xóa nhòa ranh giới địa chủ – nhà tư bản.'},
+  ],
+  quotes:[
+    {q:'Địa tô là sản phẩm tự nhiên "chảy vào tay giai cấp đó... một cách tự động."', s:'tr.109, theo Smith'},
+  ],
+  sig:'Địa tô khép lại bộ ba phạm trù cổ điển và đưa Mác tới kết luận xã hội học then chốt: xã hội tư bản chủ nghĩa tất yếu phân cực thành hai giai cấp đối lập — chuẩn bị trực tiếp về mặt lập luận cho phần "Lao động bị tha hoá" mở đầu ngay sau đó.'
+},
+{ id:'alienation', grp:'g1', title:'Lao động bị tha hóa', page:'126–146', flagship:true,
+  teaser:'Mục lý luận trung tâm của toàn bộ Bản thảo: bốn hình thức tha hóa của lao động dưới chế độ tư hữu — với sản phẩm, với chính hành vi lao động, với bản chất loài, và giữa người với người.',
+  body:`
+  <h4>Phê phán phương pháp của kinh tế chính trị học</h4>
+  <p>Mác mở đầu bằng một tổng kết: xuất phát từ chính tiền đề của kinh tế chính trị học (sở hữu tư nhân, sự tách rời lao động – tư bản – ruộng đất, cạnh tranh, phân công lao động...), ông đã chỉ ra công nhân bị hạ xuống địa vị hàng hóa, sự bần cùng của công nhân tỷ lệ thuận với sức mạnh sản phẩm anh ta tạo ra, và xã hội tất yếu phân chia thành hai giai cấp. Nhưng Mác phê phán: kinh tế chính trị học <b>xuất phát từ chế độ tư hữu như một sự kiện có sẵn</b> mà không hề giải thích nó — nó đặt các quá trình vật chất vào những công thức trừu tượng rồi coi đó là quy luật, mà không chỉ ra các quy luật ấy bắt nguồn thế nào từ bản chất chế độ tư hữu. Động cơ duy nhất nó viện đến là <b>lòng tham và chiến tranh giữa những kẻ tham lam</b>, tức cạnh tranh.</p>
+  <h4>Sự kiện xuất phát</h4>
+  <p>Thay vì viện đến một "trạng thái nguyên thuỷ" hư cấu (như kinh tế chính trị học vẫn làm — Mác so sánh việc này với cách nhà thần học giải thích tội ác bằng "tội tổ tông"), Mác lấy một sự kiện kinh tế hiện tại làm điểm xuất phát: <b>"Người công nhân sản xuất càng nhiều của cải... thì anh ta càng nghèo."</b> Người công nhân càng tạo ra nhiều hàng hóa, bản thân anh ta càng trở thành một hàng hóa rẻ mạt hơn — thế giới vật phẩm càng tăng giá trị thì thế giới con người càng mất giá trị.</p>
+  <h4>Hình thức thứ nhất — Tha hóa với sản phẩm lao động</h4>
+  <p>Sản phẩm lao động đối lập với người lao động "như một thực thể xa lạ, như một lực lượng không phụ thuộc vào người sản xuất". Mác gọi đây là sự <b>vật hóa</b> (Vergegenständlichung) biến thành sự <b>tha hóa</b>: công nhân càng sản xuất nhiều thì càng chiếm hữu được ít, và càng bị chính sản phẩm của mình (tức tư bản) thống trị mạnh hơn. Ông so sánh với tôn giáo: "con người hiến cho thần thánh càng nhiều, thì cái còn lại trong bản thân con người càng ít."</p>
+  <h4>Hình thức thứ hai — Tha hóa trong chính hành vi sản xuất</h4>
+  <p>Nếu sản phẩm là sự tha hóa thì bản thân <i>hoạt động</i> sản xuất ra nó phải là "sự tha hóa bằng hành động". Lao động trở thành cái gì đó bên ngoài, không thuộc bản chất người công nhân: <b>"trong lao động của anh ta, anh ta không khẳng định mình mà phủ định mình... không phát huy tự do nghị lực thể chất và tinh thần, mà làm kiệt quệ thân thể, phá hoại tinh thần."</b> Công nhân chỉ cảm thấy mình khi <i>không</i> làm việc — nên lao động của anh ta là <b>lao động cưỡng bức</b>, bị né tránh "như trốn tránh bệnh dịch hạch" một khi hết cưỡng bức. Từ đó, Mác đưa ra luận điểm nổi tiếng: con người chỉ cảm thấy mình hành động tự do trong các chức năng động vật (ăn, uống, sinh con đẻ cái), còn trong chức năng người (lao động) thì cảm thấy mình chỉ là con vật — "cái vốn có của súc vật trở thành chức phận của con người, còn cái có tính người thì biến thành cái vốn có của súc vật."</p>
+  <h4>Hình thức thứ ba — Tha hóa với bản chất loài (Gattungswesen)</h4>
+  <p>Con người là "sinh vật có tính loài" — không chỉ vì biến loài của mình và loài khác thành đối tượng, mà vì đối xử với bản thân như một thực thể phổ biến, tự do. Mác đối lập sắc nét với loài vật: con vật chỉ sản xuất một cách phiến diện, dưới sự chi phối trực tiếp của nhu cầu thể xác, theo kích thước và nhu cầu của loài nó; còn <b>con người sản xuất một cách toàn diện, ngay cả khi không bị nhu cầu thể xác ràng buộc, và chỉ khi ấy mới sản xuất theo đúng nghĩa</b> — con người "cũng xây dựng theo các quy luật của cái đẹp". Lao động bị tha hóa đảo ngược quan hệ này: nó biến đời sống có tính loài — hoạt động tự do, có ý thức, vốn là bản chất phân biệt người với vật — thành đơn thuần <i>phương tiện</i> duy trì sự tồn tại cá nhân.</p>
+  <h4>Hình thức thứ tư — Tha hóa giữa người với người</h4>
+  <p>Hệ quả trực tiếp của ba hình thức trên: khi con người đối lập với bản thân mình, người khác cũng đối lập với nó. Mác đặt câu hỏi bản lề: nếu sản phẩm lao động và hoạt động của tôi không thuộc về tôi, vậy chúng thuộc về ai? Câu trả lời — <b>thuộc về một người khác</b> — chính là cách Mác lật ngược trình tự nhân quả thông thường: không phải chế độ tư hữu sinh ra lao động bị tha hóa, mà chính lao động bị tha hóa mới là nguồn gốc và bản chất của chế độ tư hữu.</p>
+  <h4>Hệ quả chính trị</h4>
+  <p>Mác kết luận: giải phóng công nhân khỏi lao động bị tha hóa cũng chính là giải phóng con người nói chung, vì toàn bộ sự nô dịch con người đều nằm trong quan hệ của công nhân với sản xuất. Đây cũng là cơ sở để ông phê phán các nhà cải cách "vụn vặt" chỉ đòi tăng tiền công, hay Pru-đông khi coi bình quân hóa tiền công là mục đích của cách mạng xã hội — vì cả hai đều không đụng đến gốc rễ: bản thân chế độ lao động làm thuê.</p>
+  `,
+  concepts:[
+    {t:'Tha hóa (Entfremdung)', d:'Quá trình một sản phẩm hay hoạt động của con người trở thành thế lực độc lập, xa lạ, thống trị ngược lại chính người tạo ra nó.'},
+    {t:'Vật hóa (Vergegenständlichung)', d:'Việc lao động được "cố định", kết tinh vào một sản phẩm — trung tính về bản chất, nhưng dưới chế độ tư hữu biến thành mất-vật-phẩm và bị-vật-phẩm-nô-dịch.'},
+    {t:'Bản chất loài / sinh vật có tính loài', d:'Khái niệm mượn và cải biến từ Phoi-ơ-bắc: con người là loài duy nhất biến hoạt động sinh sống của chính mình thành đối tượng của ý thức — sản xuất tự do, toàn diện, "theo quy luật của cái đẹp".'},
+    {t:'Lao động cưỡng bức', d:'Lao động không còn là sự thỏa mãn một nhu cầu tự thân mà chỉ là phương tiện thỏa mãn những nhu cầu khác — nên bị né tránh ngay khi hết cưỡng bức.'},
+  ],
+  quotes:[
+    {q:'"Người công nhân sản xuất càng nhiều của cải... anh ta càng nghèo."', s:'tr.127'},
+    {q:'"...con người cũng xây dựng theo các quy luật của cái đẹp."', s:'tr.136'},
+    {q:'"Cái vốn có của súc vật trở thành chức phận của con người..."', s:'tr.132'},
+  ],
+  sig:'Đây là trung tâm lý luận của toàn bộ tác phẩm — nơi Mác lần đầu trình bày hệ thống bốn hình thức tha hóa, đặt nền cho toàn bộ phê phán chế độ tư hữu ở Bản thảo thứ ba, và là điểm quy chiếu kinh điển trong mọi nghiên cứu về Mác trẻ.'
+},
+{ id:'ms2', grp:'g2', title:'Bản thảo thứ hai — Quan hệ sở hữu tư nhân', page:'147–156',
+  teaser:'Đoạn văn ngắn, chỉ còn sót lại vài trang từ bản viết tay gốc: tư bản và lao động là hai hình thức soi gương của cùng một sự tha hóa — "tư bản là con người đã đánh mất bản thân mình".',
+  body:`
+  <h4>Tình trạng văn bản</h4>
+  <p>Bản thảo thứ hai trong tập ghi chép gốc của Mác chỉ còn lại một đoạn cuối rất ngắn (khoảng 4 trang viết tay); phần lớn tập vở này đã thất lạc. Đoạn còn lại được các nhà biên tập đặt tiêu đề <i>"Quan hệ sở hữu tư nhân"</i>.</p>
+  <h4>Tư bản và lao động: hai mặt của cùng một sự tha hóa</h4>
+  <p>Mác viết: ở trong con người công nhân, tồn tại một cách <i>chủ quan</i> tình trạng "tư bản là con người đã hoàn toàn đánh mất bản thân mình", cũng như trong tư bản, tồn tại một cách <i>khách quan</i> tình trạng "lao động là con người đã đánh mất bản thân mình". Nhưng người công nhân có cái bất hạnh là <b>làm cho tư bản sống</b>: chừng nào anh ta không làm việc, "tư bản" ấy (chính là năng lực lao động của anh ta) mất lợi tức và mất luôn cả sự tồn tại.</p>
+  <h4>Người công nhân thất nghiệp: "bóng ma" ngoài kinh tế chính trị học</h4>
+  <p>Một đoạn đặc biệt sắc bén: Mác chỉ ra kinh tế chính trị học chỉ biết đến công nhân trong quan hệ lao động — còn kẻ lang thang, người ăn xin, người thất nghiệp, người chết đói, người phạm tội đều là "những nhân vật không tồn tại đối với kinh tế chính trị học", mà chỉ tồn tại trước con mắt thầy thuốc, quan tòa, người đào huyệt, giám thị người nghèo — "những bóng ma lẩn quất bên ngoài lĩnh vực kinh tế chính trị học".</p>
+  <h4>Ví dụ lịch sử cụ thể: Đạo luật người nghèo 1834</h4>
+  <p>Mác dẫn một sự kiện cụ thể để minh họa việc tiền công chỉ được coi như "dầu mỡ bôi bánh xe" cho cỗ máy sản xuất: trước đạo luật mới về người nghèo năm 1834, các chủ xưởng Anh đã <b>khấu trừ thẳng vào tiền công của công nhân số tiền cứu tế xã hội</b> mà chính công nhân đó nhận được từ thuế cứu tế người nghèo — coi khoản cứu tế như một bộ phận cấu thành của tiền công.</p>
+  <h4>Ricardo, Mill và bước tiến (đầy nghịch lý) của kinh tế chính trị học</h4>
+  <p>Mác ghi nhận: Ricardo, Mill có bước tiến so với Smith, Say ở chỗ họ công khai tuyên bố rằng việc công nhân — "hàng hóa" ấy — có năng lực sản xuất mang tính người nhiều hay ít là <i>không quan hệ gì, thậm chí có hại</i> để xét đến. Mục đích thật sự của sản xuất, theo họ, không phải là tư bản nuôi sống bao nhiêu công nhân, mà là tư bản đem lại bao nhiêu lợi tức.</p>
+  `,
+  concepts:[
+    {t:'Quan hệ soi gương giữa tư bản và lao động', d:'Chủ quan (nơi công nhân): tư bản = con người đã mất mình. Khách quan (nơi tư bản): lao động = con người đã mất mình — hai cách diễn đạt của cùng một sự tha hóa.'},
+  ],
+  quotes:[
+    {q:'"Tư bản là con người đã hoàn toàn đánh mất bản thân mình."', s:'tr.146'},
+    {q:'Người thất nghiệp là "những bóng ma lẩn quất bên ngoài lĩnh vực kinh tế chính trị học."', s:'tr.148'},
+  ],
+  sig:'Dù ngắn, đoạn này là cầu nối quan trọng: nó khái quát hóa "lao động bị tha hóa" thành cặp phạm trù tư bản/lao động đối xứng nhau, chuẩn bị cho phân tích có hệ thống hơn về chủ nghĩa cộng sản ở Bản thảo thứ ba.'
+},
+{ id:'ms3-intro', grp:'g3', title:'Bản chất chế độ tư hữu', page:'157–162',
+  teaser:'Đoạn bản lề mở đầu Bản thảo thứ ba, khảo sát bản chất chủ quan của chế độ tư hữu — với tính cách là lao động tự-vì-mình — trước khi bước sang phân tích chủ nghĩa cộng sản.',
+  body:`
+  <h4>Vị trí trong lập luận</h4>
+  <p>Đoạn mở đầu Bản thảo thứ ba tiếp tục mạch phân tích từ Bản thảo thứ hai, khảo sát kỹ hơn <b>bản chất chủ quan</b> của chế độ tư hữu — tức chế độ tư hữu nhìn từ phía lao động, chứ không chỉ từ phía vật sở hữu (tư bản). Mác muốn chỉ ra rằng chế độ tư hữu không phải một "vật" trung tính mà là kết tinh của một quan hệ lao động bị tha hóa cụ thể.</p>
+  <h4>Chuẩn bị cho phần Chủ nghĩa cộng sản</h4>
+  <p>Về mặt cấu trúc văn bản, đây là đoạn ngắn có chức năng bản lề: nó khép lại phần phân tích "tĩnh" về chế độ tư hữu (đã triển khai qua Tiền công – Lợi nhuận – Địa tô – Lao động bị tha hóa – Bản thảo thứ hai) để mở sang phần phân tích "động" — tức các phương án <i>xóa bỏ</i> chế độ tư hữu mà các trào lưu xã hội chủ nghĩa đương thời (Pru-đông, Phu-ri-ê, Xanh-Xi-mông) đã đề xuất, được Mác đánh giá và vượt qua ở mục kế tiếp.</p>
+  `,
+  concepts:[
+    {t:'Bản chất chủ quan của tư hữu', d:'Tư hữu không chỉ là quan hệ với vật (khách quan) mà còn là lao động-cho-mình (chủ quan) — hai mặt của cùng một hiện tượng tha hóa.'},
+  ],
+  quotes:[],
+  sig:'Đoạn ngắn nhưng đóng vai trò bản lề cấu trúc, dẫn trực tiếp vào phần "Chủ nghĩa cộng sản" — phần lý luận quan trọng thứ hai của toàn tác phẩm sau "Lao động bị tha hóa".'
+},
+{ id:'communism', grp:'g3', title:'Chủ nghĩa cộng sản', page:'163–183', flagship:true,
+  teaser:'Mác phân biệt ba dạng thức xóa bỏ chế độ tư hữu, phê phán gay gắt "chủ nghĩa cộng sản thô lỗ", và đưa ra định nghĩa cộng sản chân chính như sự giải quyết thực sự "câu đố của lịch sử".',
+  body:`
+  <h4>Từ đối lập trừu tượng đến mâu thuẫn lao động – tư bản</h4>
+  <p>Mác mở đầu: đối lập giữa tình trạng không sở hữu và sở hữu vẫn còn <b>trừu tượng</b>, chưa phải là mâu thuẫn thực sự, chừng nào chưa được hiểu là đối lập giữa <b>lao động và tư bản</b>. Hình thức đối lập sơ khai có thể tồn tại mà không cần chế độ tư hữu phát triển đầy đủ (La Mã cổ đại, Thổ Nhĩ Kỳ) — nhưng chỉ khi phát triển tới hình thức lao động/tư bản hiện đại, mâu thuẫn ấy mới trở thành hình thức "mãnh liệt, thúc đẩy giải quyết".</p>
+  <h4>Ba lập trường xóa bỏ tư hữu đương thời</h4>
+  <p>Mác điểm qua và phê phán các trào lưu xã hội chủ nghĩa Pháp: Pru-đông muốn xóa bỏ tư bản "với tính cách như vậy" — chỉ nhìn ở khía cạnh khách quan; Phu-ri-ê (và phái trọng nông trước đó) coi lao động nông nghiệp là hình thức lao động tốt nhất, quy nguyên nhân tác hại của tư hữu về <i>tính chất</i> bị san bằng, phân nhỏ của lao động; Xanh-Xi-mông ngược lại, đề cao lao động công nghiệp, muốn giới công nghiệp thống trị hoàn toàn.</p>
+  <h4>Ba dạng thức của chủ nghĩa cộng sản</h4>
+  <ol>
+    <li><b>Chủ nghĩa cộng sản thô lỗ</b> — chỉ là sự khái quát hóa và hoàn thành chế độ tư hữu, dưới hai biến thể: (a) bị sự chiếm hữu vật chất trực tiếp thống trị đến mức muốn <i>xóa bỏ bằng bạo lực</i> tài năng, văn hóa — phạm trù "công nhân" không bị xóa mà mở rộng ra cho mọi người; ở hình thức thú vật nhất, nó biểu hiện qua ý tưởng "cộng thê" (community of women) — Mác coi đây là nơi chủ nghĩa cộng sản thô lỗ "tiết lộ bí mật" của chính nó: cũng như phụ nữ chuyển từ hôn nhân sang mại dâm chung, toàn bộ thế giới của cải chuyển từ sở hữu độc quyền sang "mại dâm phổ biến với toàn xã hội". Mác gọi đây là hình thức <b>phủ định cá tính con người</b>, chỉ là biểu hiện nhất quán của lòng ghen ghét và ý muốn bình quân hóa xuất phát từ một "mức tối thiểu" cố định — không vượt lên trên chế độ tư hữu mà thậm chí chưa đạt tới trình độ của nó. (b) đã xóa bỏ tư hữu về mặt chính trị hoặc xóa bỏ nhà nước, nhưng chưa hoàn bị, còn bị tư hữu "cầm tù và truyền nhiễm" vì chưa hiểu được bản chất tích cực của tư hữu và tính người của nhu cầu.</li>
+    <li><b>Chủ nghĩa cộng sản chính trị</b> — dân chủ hoặc chuyên chế, hoặc xóa bỏ nhà nước nhưng chưa hoàn chỉnh, đã quan niệm mình như việc con người "quay về bản thân mình" nhưng vẫn còn bị chế độ tư hữu chi phối.</li>
+    <li><b>Chủ nghĩa cộng sản chân chính</b> — "sự xóa bỏ một cách tích cực chế độ tư hữu — sự tự tha hóa ấy của con người — và do đó là sự chiếm hữu một cách thực sự bản chất con người bởi con người và vì con người". Đây là sự quay trở lại hoàn toàn của con người với chính mình, với tính cách con người <i>xã hội</i>, diễn ra một cách có ý thức, giữ lại toàn bộ sự phong phú đã phát triển trước đó. Mác định nghĩa nó bằng công thức nổi tiếng: <b>chủ nghĩa tự nhiên hoàn bị = chủ nghĩa nhân đạo, và chủ nghĩa nhân đạo hoàn bị = chủ nghĩa tự nhiên</b> — là sự giải quyết thực sự mâu thuẫn giữa người và tự nhiên, giữa người và người, giữa tồn tại và bản chất, giữa tự do và tất yếu, giữa cá thể và loài. <b>"Nó là sự giải quyết câu đố của lịch sử và nó biết rằng nó là sự giải quyết ấy."</b></li>
+  </ol>
+  <h4>Phê phán các lý thuyết gia cộng sản "chưa hoàn bị"</h4>
+  <p>Mác phê phán những người (nêu tên Ca-bê, Vi-lơ-gác-đen) đi tìm "chứng minh lịch sử" cho chủ nghĩa cộng sản bằng cách tách riêng và cố định vài nhân tố cá biệt trong dòng vận động lịch sử — trong khi phần lớn vận động lịch sử thực tế lại mâu thuẫn với chính những khẳng định đó của họ.</p>
+  <h4>Tha hóa kinh tế và tha hóa tôn giáo</h4>
+  <p>Mác phân biệt: tha hóa tôn giáo chỉ diễn ra trong lĩnh vực ý thức, còn tha hóa kinh tế là tha hóa của <i>sinh hoạt hiện thực</i> — nên việc xóa bỏ nó bao trùm cả hai lĩnh vực. Chủ nghĩa cộng sản bắt đầu ngay từ chủ nghĩa vô thần (nêu tên Ô-oen), nhưng lòng thương người của chủ nghĩa vô thần ban đầu chỉ có tính triết học trừu tượng, còn lòng thương người của chủ nghĩa cộng sản thì "lập tức có tính hiện thực và trực tiếp nhằm vào hành động".</p>
+  `,
+  concepts:[
+    {t:'Chủ nghĩa cộng sản thô lỗ', d:'Hình thức sơ khai, phủ định cá tính con người, muốn phổ quát hóa tư hữu thay vì xóa bỏ nó — biểu hiện cực đoan qua ý tưởng "cộng thê".'},
+    {t:'Chủ nghĩa cộng sản = chủ nghĩa tự nhiên hoàn bị = chủ nghĩa nhân đạo hoàn bị', d:'Công thức trung tâm định nghĩa chủ nghĩa cộng sản chân chính của Mác — giải quyết triệt để các mâu thuẫn người-tự nhiên và người-người.'},
+    {t:'"Giải quyết câu đố của lịch sử"', d:'Cách Mác mô tả chủ nghĩa cộng sản: không phải một mô hình xã hội được thiết kế sẵn, mà là kết quả tất yếu, tự-nhận-thức của toàn bộ vận động lịch sử.'},
+  ],
+  quotes:[
+    {q:'"Nó là sự giải quyết câu đố của lịch sử và nó biết rằng nó là sự giải quyết ấy."', s:'tr.183'},
+    {q:'Chủ nghĩa cộng sản thô lỗ "đâu đâu cũng phủ định cá tính của con người".', s:'tr.164'},
+  ],
+  sig:'Đây là tuyên ngôn triết học rõ ràng nhất của Mác trẻ về chủ nghĩa cộng sản — khác hẳn các mô tả thể chế/kinh tế sau này trong "Tư bản luận". Đoạn phê phán "chủ nghĩa cộng sản thô lỗ" cũng thường được trích dẫn như bằng chứng Mác không đồng nhất chủ nghĩa cộng sản với chủ nghĩa bình quân.'
+},
+{ id:'needs', grp:'g3', title:'Nhu cầu, sản xuất và phân công lao động', page:'184–208',
+  teaser:'Dưới chế độ tư hữu, mỗi nhu cầu mới của người khác trở thành cơ hội trục lợi; nhu cầu về tiền là nhu cầu thật sự duy nhất mà kinh tế chính trị học sản sinh ra.',
+  body:`
+  <h4>Nhu cầu dưới chủ nghĩa xã hội và dưới chế độ tư hữu</h4>
+  <p>Mác đối lập hai ý nghĩa của sự "phong phú nhu cầu": dưới chủ nghĩa xã hội, một phương thức sản xuất/đối tượng sản xuất mới là biểu hiện của sự phong phú thêm bản chất con người. Dưới chế độ tư hữu, ý nghĩa đảo ngược hoàn toàn: <b>mỗi người tìm cách thức tỉnh ở người khác một nhu cầu mới</b> để buộc người đó lệ thuộc, hy sinh, đẩy vào một hình thức hưởng thụ mới dẫn tới phá sản kinh tế — mỗi sản phẩm mới trở thành "một khả năng mới để lừa dối lẫn nhau và cướp đoạt lẫn nhau".</p>
+  <h4>"Nhu cầu về tiền" — nhu cầu thật sự duy nhất</h4>
+  <p>Từ đó Mác đưa ra luận điểm cô đọng: con người càng nghèo khổ với tính cách con người thì càng cần đến tiền để chiếm hữu lại bản chất xa lạ (đã bị tha hóa) của chính mình — quyền lực đồng tiền tăng lên đúng theo tỷ lệ nghịch với mức thiếu thốn của con người. <b>"Nhu cầu về tiền tệ là nhu cầu thật sự do kinh tế chính trị học đề ra, và là nhu cầu duy nhất mà kinh tế chính trị học đẻ ra."</b></p>
+  <h4>Hình tượng "hoạn quan công nghiệp"</h4>
+  <p>Một trong những đoạn văn châm biếm sắc sảo nhất của Bản thảo: Mác ví người sản xuất/nhà công nghiệp như một "hoạn quan công nghiệp" mơn trớn thị hiếu suy đồi của người tiêu dùng để moi tiền — mỗi sản phẩm là "miếng mồi" nhử lấy bản chất (tiền bạc) của người khác; mỗi nhu cầu, dù thật hay giả tạo, là cơ hội để tiếp cận đồng loại và đòi hỏi điều kiện trao đổi trước khi ban phát khoái lạc.</p>
+  <h4>Cảnh sống thực của công nhân</h4>
+  <p>Mác mô tả cụ thể, gần như phóng sự: ngay cả nhu cầu về không khí trong lành cũng không còn là nhu cầu của công nhân nữa; con người trở lại sống trong "hang", nhưng những hang này bị "hơi thở dịch hạch" của văn minh đầu độc, có thể bị đuổi khỏi bất cứ lúc nào nếu không trả được tiền thuê nhà; ánh sáng, không khí, sự sạch sẽ tối thiểu mà cả loài vật cũng có không còn là nhu cầu con người. Ông dẫn một chi tiết kỹ thuật – lịch sử đáng chú ý: <b>bánh xe đạp bằng chân của nô lệ La Mã cổ đại đã trở lại làm công cụ sản xuất</b> đối với nhiều công nhân Anh đương thời — một sự thụt lùi kỹ thuật ngay giữa lòng nền công nghiệp hiện đại.</p>
+  <h4>Phân công lao động</h4>
+  <p>Phần này (nối tiếp sang các trang sau) phân tích phân công lao động như một trong những biểu hiện rõ nhất của việc hoạt động có tính loài của con người bị biến thành một phạm trù xa lạ, tha hóa với chính nó — mở rộng khái niệm "lao động bị tha hóa" sang bình diện tổ chức xã hội của sản xuất.</p>
+  `,
+  concepts:[
+    {t:'Nhu cầu về tiền', d:'Theo Mác, đây là nhu cầu "thật sự" duy nhất mà kinh tế chính trị học sản sinh ra — mọi nhu cầu người khác đều bị quy giản, biến dạng qua lăng kính tiền bạc.'},
+    {t:'Hoạn quan công nghiệp', d:'Ẩn dụ của Mác về nhà sản xuất/thương nhân: kẻ mơn trớn, kích thích nhu cầu giả tạo của người tiêu dùng chỉ để trục lợi, tương tự hoạn quan nịnh bợ vua chúa.'},
+  ],
+  quotes:[
+    {q:'"Nhu cầu về tiền tệ là nhu cầu thật sự do kinh tế chính trị học đề ra..."', s:'tr.184'},
+    {q:'Bánh xe đạp bằng chân của nô lệ La Mã "đã trở thành công cụ sản xuất" của công nhân Anh.', s:'tr.186'},
+  ],
+  sig:'Phần này mở rộng lý thuyết tha hóa từ quan hệ sản xuất sang quan hệ tiêu dùng/nhu cầu — cho thấy tha hóa không chỉ diễn ra tại nơi làm việc mà thấm vào toàn bộ đời sống vật chất và tinh thần của con người dưới chế độ tư hữu.'
+},
+{ id:'money', grp:'g3', title:'Tiền', page:'209–216',
+  teaser:'Tiền là "vị thần hữu hình", năng lực bị tha hóa của nhân loại — biến mọi bất lực thành quyền năng và mọi phẩm chất thành cái đối lập của nó. Mác minh họa bằng Sếch-xpia và Gớt.',
+  body:`
+  <h4>Tiền như "sự đảo lộn phổ quát"</h4>
+  <p>Mác mở đầu bằng việc phân tích một đoạn thơ của Gớt (Faust) rồi đến đoạn độc thoại nổi tiếng của Sếch-xpia trong <i>Timon thành A-ten</i> (hồi IV, cảnh 3) — nơi vàng bạc bị gọi là "hầu non chung của cả loài người", thứ kim loại "khiến kẻ cướp thành thượng nghị sĩ", "đem những vị hôn phu cho góa phụ đã hết thời". Từ hai đoạn thơ này, Mác rút ra hai thuộc tính cốt lõi mà Sếch-xpia đã nắm bắt: (1) tiền là <b>vị thần hữu hình</b> — biến mọi thuộc tính của con người và tự nhiên thành cái đối lập của chúng, "kết hợp mật thiết những cái không thể kết hợp được"; (2) tiền là <b>kẻ môi giới phổ biến</b> của con người và các dân tộc — vừa là "phương tiện phổ biến để chia rẽ", vừa là "lực lượng hóa học" liên kết xã hội.</p>
+  <h4>"Tôi là gì và tôi có thể làm gì" — đoạn văn trung tâm</h4>
+  <p>Đây là một trong những đoạn được trích dẫn nhiều nhất của toàn bộ Bản thảo. Mác lập luận: cái tồn tại đối với tôi nhờ có tiền — cái tôi có thể trả tiền để mua — <i>chính là bản thân tôi</i>, người có tiền. Sức mạnh của tiền lớn bao nhiêu thì sức mạnh của tôi lớn bấy nhiêu. Ông liệt kê hàng loạt nghịch lý: <b>"Tôi xấu, nhưng tôi có thể mua cho tôi một người đàn bà tuyệt đẹp — do đó tôi không xấu... Tôi là người thọt, nhưng tiền cho tôi hai mươi bốn chân — do đó tôi không thọt."</b> Tiền, với tính cách là "trí tuệ hiện thực của mọi sự vật", biến mọi sự bất lực cá nhân thành cái đối lập trực tiếp của nó.</p>
+  <h4>Cầu hữu hiệu và cầu tưởng tượng</h4>
+  <p>Mác phân biệt: cầu dựa vào tiền (cầu hữu hiệu) khác về bản chất với cầu chỉ dựa vào nhu cầu/dục vọng của tôi (cầu vô hiệu) — sự khác nhau giữa <b>tồn tại và tư duy</b>, giữa một tưởng tượng chỉ tồn tại trong tôi và một tưởng tượng tồn tại ở bên ngoài tôi như đối tượng hiện thực. Không có tiền để đi du lịch nghĩa là không có nhu cầu du lịch <i>hiện thực</i>; có khiếu nghiên cứu khoa học nhưng không tiền thì cũng coi như không có khiếu — trong khi không hề có năng khiếu nhưng có tiền thì lại có "khiếu hữu hiệu".</p>
+  <h4>Tiền như năng lực bị tha hóa của nhân loại</h4>
+  <p>Mác kết luận: sức mạnh thần thánh của tiền nằm ngay trong bản chất của nó — là <b>bản chất loài đã bị tha hóa, đang làm tha hóa và tự tha hóa của con người</b>, là "năng lực đã bị tha hóa của nhân loại". Với vai trò môi giới, tiền biến nguyện vọng từ tồn tại-được-tưởng-tượng thành tồn tại-hiện-thực — do đó, theo nghĩa méo mó này, tiền là "một lực lượng sáng tạo đích thực".</p>
+  `,
+  concepts:[
+    {t:'Tiền = vị thần hữu hình', d:'Cách Mác diễn giải Sếch-xpia: tiền đảo lộn và xuyên tạc mọi phẩm chất của con người và tự nhiên, kết hợp những cái đối lập không thể kết hợp.'},
+    {t:'Cầu hữu hiệu vs. cầu tưởng tượng', d:'Chỉ nhu cầu được tiền bảo chứng mới có "tồn tại hiện thực"; nhu cầu không có tiền chỉ là tồn tại trong ý nghĩ, không có sức mạnh thực tế.'},
+  ],
+  quotes:[
+    {q:'"Tôi xấu, nhưng tôi có thể mua cho tôi một người đàn bà tuyệt đẹp."', s:'tr.211'},
+    {q:'Tiền là "năng lực đã bị tha hóa của nhân loại."', s:'tr.212'},
+  ],
+  sig:'Phần "Tiền" là một trong những đoạn văn chương – triết học nổi tiếng nhất Mác từng viết, thường được trích riêng trong các tuyển tập mỹ học Mác-xít; nó cho thấy lý thuyết tha hóa của Mác không tách rời khỏi phân tích văn hóa và văn chương.'
+},
+{ id:'hegel', grp:'g3', title:'Phê phán phép biện chứng Hê-ghen', page:'217–249',
+  teaser:'Chương khép lại tác phẩm: Mác vừa ca ngợi Hê-ghen vì đã nắm được "bản chất của lao động", vừa phê phán ông vì chỉ biết đến lao động tinh thần trừu tượng, khiến sự tha hóa chỉ được giải quyết trong tư duy thuần túy.',
+  body:`
+  <h4>Mở đầu bằng phê phán phái Hê-ghen trẻ</h4>
+  <p>Mác dành phần mở đầu để công kích Stơ-rau-xơ và đặc biệt Bru-nô Bau-ơ — những người tự xưng đã có "sự phê phán thuần túy, kiên quyết, tuyệt đối" nhưng trên thực tế vẫn hoàn toàn bị chi phối bởi lô-gích học Hê-ghen, đôi khi lặp lại gần như nguyên văn các luận điểm Hê-ghen (Mác trích dẫn cụ thể từ "Đạo Cơ Đốc bị vạch trần" của Bau-ơ để chứng minh). Ông chỉ trích thái độ "hoàn toàn không phê phán đối với bản thân mình" của phái này — chưa từng phân rõ ranh giới một cách có phê phán với "mẹ nó", tức phép biện chứng Hê-ghen, cũng như chưa có thái độ phê phán đối với phép biện chứng của Phoi-ơ-bắc.</p>
+  <p>Đối lập với họ, Mác khẳng định lại: <b>Phoi-ơ-bắc là nhà tư tưởng duy nhất có thái độ nghiêm túc, phê phán đối với phép biện chứng Hê-ghen</b> — người duy nhất có những phát hiện chân chính và thực sự khắc phục được triết học cũ.</p>
+  <h4>Cái được và cái mất trong "Hiện tượng học Tinh thần"</h4>
+  <p>Phần lõi triết học của chương (theo cấu trúc kinh điển được giới nghiên cứu xác lập) xoay quanh đánh giá hai mặt của Mác đối với Hê-ghen:</p>
+  <ul>
+    <li><b>Cái vĩ đại:</b> Hê-ghen nắm bắt được sự tự sinh thành của con người như một <i>quá trình</i>, nắm được sự vật hóa như là mất-đối-tượng, như sự tha hóa và sự vượt qua tha hóa ấy — tức ông đã nắm được <b>bản chất của lao động</b> và hiểu con người-đối-tượng là kết quả của chính lao động của con người.</li>
+    <li><b>Giới hạn căn bản:</b> Hê-ghen chỉ biết và chỉ thừa nhận một loại lao động duy nhất — <b>lao động tinh thần trừu tượng</b>. Vì với Hê-ghen, bản chất con người = tự ý thức, nên đối tượng (cái "khác" của tự ý thức) chỉ do chính tự ý thức đặt ra; do đó sự tha hóa, mâu thuẫn thực sự duy nhất đối với Hê-ghen chỉ là đối lập <i>bên trong tư duy</i> — giữa "tự nó" và "cho nó", giữa ý thức và tự ý thức, giữa khách thể và chủ thể. Mọi đối lập khác chỉ là <b>vỏ bọc, hình thức bí truyền</b> của đối lập duy nhất ấy.</li>
+  </ul>
+  <h4>Hệ quả: đồng nhất vật hóa với tha hóa</h4>
+  <p>Vì quy mọi thứ về đối lập trong tư duy, Hê-ghen đồng nhất <i>sự vật hóa nói chung</i> (trung tính) với <i>sự tha hóa</i> (tiêu cực) — nên cuộc đấu tranh giành lại tính đối tượng (objectivity) bị Hê-ghen coi là điều cần vượt qua, vì ông coi bản thân tính đối tượng là hình thức tha hóa của con người, không tương xứng với bản chất "tự ý thức" của nó. Do đó, việc chiếm lại những lực lượng bản chất đã bị vật hóa/tha hóa, ở Hê-ghen, chỉ diễn ra như một <b>vận động thuần túy trong tư duy, trong ý thức</b>.</p>
+  <h4>Kết quả: giải pháp tư biện, không phải giải pháp thực sự</h4>
+  <p>Vì vậy, phép biện chứng Hê-ghen mang lại một sự diễn đạt triết học, đã bị thần bí hóa, cho các vận động lịch sử thực (tha hóa và sự vượt qua nó) — nhưng "lời giải" mà Hê-ghen đưa ra chung quy chỉ là giải pháp tư biện, để nguyên hiện thực tha hóa đang tồn tại, dù tuyên bố đã "vượt qua" nó trong tư duy. Nhiệm vụ mà Mác tự đặt ra ở cuối chương là tách phần giá trị thực sự trong phép biện chứng Hê-ghen — phép biện chứng của tính phủ định như nguyên lý vận động, sản sinh, cùng sự hiểu biết về lao động và sự tự sinh thành của con người qua chính hoạt động của mình — ra khỏi cái vỏ duy tâm thần bí hóa của nó.</p>
+  `,
+  concepts:[
+    {t:'Phép biện chứng của tính phủ định', d:'Nguyên lý vận động/sản sinh trong "Hiện tượng học" mà Mác đánh giá cao ở Hê-ghen — nhưng cho rằng nó bị giam trong vỏ bọc duy tâm.'},
+    {t:'Đồng nhất vật hóa với tha hóa (giới hạn của Hê-ghen)', d:'Sai lầm cốt lõi Mác chỉ ra: Hê-ghen coi mọi hình thức đối tượng hóa là tha hóa cần vượt qua, vì chỉ công nhận bản chất con người là tự ý thức.'},
+  ],
+  quotes:[
+    {q:'Hê-ghen "nắm được bản chất của lao động" — nhưng chỉ lao động tinh thần trừu tượng.', s:'tr.~238 (theo diễn giải kinh điển)'},
+  ],
+  sig:'Chương khép lại đưa lý thuyết tha hóa của Mác trở lại đối thoại trực tiếp với triết học Hê-ghen — làm rõ Mác vừa kế thừa (phép biện chứng, khái niệm lao động-tự-sinh-thành) vừa đoạn tuyệt (chủ nghĩa duy tâm, giải pháp thuần túy tư duy) với người thầy triết học lớn nhất của mình.'
+},
+];
+
+const GROUPS = [
+  {id:'g0', label:'Mở đầu', pages:''},
+  {id:'g1', label:'Bản thảo thứ nhất', pages:'tr.72–146'},
+  {id:'g2', label:'Bản thảo thứ hai', pages:'tr.147–156'},
+  {id:'g3', label:'Bản thảo thứ ba', pages:'tr.157–249'},
+];
+
+const GLOSSARY = [
+  {t:'Tha hóa (Entfremdung)', d:'Quá trình sản phẩm/hoạt động của con người trở thành lực lượng độc lập, xa lạ, quay lại thống trị chính người tạo ra nó.'},
+  {t:'Vật hóa (Vergegenständlichung)', d:'Lao động được kết tinh, cố định vào một sản phẩm — bản thân trung tính, nhưng dưới chế độ tư hữu biến thành mất-vật-phẩm.'},
+  {t:'Bản chất loài (Gattungswesen)', d:'Con người là sinh vật đối xử với hoạt động sinh sống của mình như đối tượng của ý thức — sản xuất tự do, toàn diện, kể cả khi không bị nhu cầu thể xác ép buộc.'},
+  {t:'Lao động cưỡng bức', d:'Lao động không phải là sự thỏa mãn một nhu cầu tự thân mà chỉ là phương tiện cho nhu cầu khác — nên bị né tránh ngay khi hết ép buộc.'},
+  {t:'Chủ nghĩa cộng sản thô lỗ', d:'Hình thức sơ khai của việc xóa bỏ tư hữu, chỉ phổ quát hóa chứ không vượt qua tư hữu — biểu hiện cực đoan qua ý tưởng "cộng thê".'},
+  {t:'Chủ nghĩa cộng sản chân chính', d:'"Chủ nghĩa tự nhiên hoàn bị = chủ nghĩa nhân đạo hoàn bị" — giải quyết thực sự mâu thuẫn người-tự nhiên và người-người, "câu đố của lịch sử".'},
+  {t:'Tư bản = lao động tích lũy', d:'Định nghĩa mượn từ Adam Smith: tư bản là một khối lượng lao động được dành làm dự trữ — quyền chi phối lao động của người khác.'},
+  {t:'Địa tô như giá cả độc quyền', d:'Địa tô không tỷ lệ với đầu tư cải tạo đất mà tỷ lệ với mức người thuê có thể trả — về bản chất là một khoản khấu trừ độc quyền.'},
+  {t:'Tiền công tối thiểu tự nhiên', d:'Theo Adam Smith (Mác trích dẫn): mức chỉ đủ duy trì sự sống công nhân khi lao động, cộng thêm chút để nuôi gia đình.'},
+  {t:'Nhu cầu về tiền', d:'Theo Mác, nhu cầu "thật sự" duy nhất mà kinh tế chính trị học sản sinh ra — mọi nhu cầu khác đều bị quy giản qua lăng kính đồng tiền.'},
+  {t:'Tiền = vị thần hữu hình', d:'Cách Mác diễn giải Sếch-xpia: tiền đảo lộn mọi phẩm chất người và tự nhiên, "kết hợp những cái không thể kết hợp được".',},
+  {t:'Cầu hữu hiệu vs. cầu tưởng tượng', d:'Chỉ nhu cầu được tiền bảo chứng mới có tồn tại hiện thực; nhu cầu không tiền chỉ tồn tại trong ý nghĩ.'},
+  {t:'Hoạn quan công nghiệp', d:'Ẩn dụ về nhà sản xuất mơn trớn, kích thích nhu cầu giả tạo của người tiêu dùng để trục lợi.'},
+  {t:'Phê phán có tính phê phán', d:'Cách Mác châm biếm nhóm Bruno Bauer — tự xưng phê phán "tuyệt đối" nhưng vẫn bị giam trong lô-gích học Hê-ghen.'},
+  {t:'Phép biện chứng của tính phủ định', d:'Nguyên lý vận động/sản sinh trong "Hiện tượng học" của Hê-ghen mà Mác đánh giá cao, dù cho rằng nó bị giam trong vỏ duy tâm.'},
+  {t:'Đối tượng hóa vs. tha hóa (phê phán Hê-ghen)', d:'Sai lầm Mác chỉ ra ở Hê-ghen: đồng nhất mọi hình thức đối tượng hóa (trung tính) với tha hóa (tiêu cực).'},
+  {t:'Quan hệ soi gương tư bản – lao động', d:'Chủ quan (nơi công nhân): tư bản = người đã mất mình. Khách quan (nơi tư bản): lao động = người đã mất mình.'},
+  {t:'Sự hòa tan sở hữu ruộng đất vào tư bản', d:'Luận điểm lịch sử: nông nghiệp quy mô lớn khiến sở hữu ruộng đất phong kiến dần mang bản chất tư bản.'},
+  {t:'Tích lũy tư bản bất đối xứng', d:'Vì lợi nhuận tỷ lệ với quy mô tư bản, tư bản lớn tích lũy nhanh hơn tư bản nhỏ ngay cả khi không tính cạnh tranh chủ định.'},
+  {t:'Lợi ích giai cấp tư bản đối lập lợi ích xã hội', d:'Theo Smith (Mác trích): tỷ suất lợi nhuận cao nhất lại ở những nước nghèo/sắp phá sản — khác hẳn địa tô và tiền công.'},
+];
+
+// ---------- RENDER ----------
+let currentId = SECTIONS[0].id;
+let readSet = new Set();
+
+function buildFlow(){
+  const row = document.getElementById('flowRow');
+  row.innerHTML = '';
+  SECTIONS.forEach((s,i)=>{
+    const pill = document.createElement('span');
+    pill.className = 'flow-pill' + (s.id===currentId?' active':'');
+    pill.textContent = s.title;
+    pill.onclick = ()=>goTo(s.id);
+    row.appendChild(pill);
+    if(i < SECTIONS.length-1){
+      const arrow = document.createElement('span');
+      arrow.className = 'flow-arrow';
+      arrow.textContent = '→';
+      row.appendChild(arrow);
+    }
+  });
+}
+
+function buildSidebar(){
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '';
+  GROUPS.forEach(g=>{
+    const items = SECTIONS.filter(s=>s.grp===g.id);
+    if(!items.length) return;
+    const grpDiv = document.createElement('div');
+    grpDiv.className = 'grp';
+    grpDiv.innerHTML = `<div class="grp-title">${g.label} ${g.pages?`<span class="grp-pages">${g.pages}</span>`:''}</div>`;
+    items.forEach(s=>{
+      const btn = document.createElement('button');
+      btn.className = 'navitem' + (s.id===currentId?' active':'') + (readSet.has(s.id)?' read':'');
+      btn.innerHTML = `${s.title}<span class="np">tr.${s.page}</span>`;
+      btn.onclick = ()=>goTo(s.id);
+      grpDiv.appendChild(btn);
+    });
+    sb.appendChild(grpDiv);
+  });
+}
+
+function renderPanel(){
+  const s = SECTIONS.find(x=>x.id===currentId);
+  const idx = SECTIONS.findIndex(x=>x.id===currentId);
+  readSet.add(currentId);
+  document.getElementById('progressLabel').textContent = readSet.size + '/' + SECTIONS.length + ' mục đã xem';
+
+  let conceptsHtml = '';
+  if(s.concepts && s.concepts.length){
+    conceptsHtml = `<div class="box box-concepts"><div class="box-title">Khái niệm cốt lõi</div>` +
+      s.concepts.map(c=>`<div class="concept"><span class="cterm">${c.t}</span> — <span class="cdef">${c.d}</span></div>`).join('') +
+      `</div>`;
+  }
+  let quotesHtml = '';
+  if(s.quotes && s.quotes.length){
+    quotesHtml = `<div class="box box-quotes"><div class="box-title">Trích dẫn tiêu biểu</div>` +
+      s.quotes.map(q=>`<div class="quote">${q.q}<span class="qsrc">${q.s}</span></div>`).join('') +
+      `</div>`;
+  }
+  let sigHtml = s.sig ? `<div class="box box-sig"><div class="box-title">Ý nghĩa lý luận</div><p>${s.sig}</p></div>` : '';
+
+  document.getElementById('panel').innerHTML = `
+    <div class="p-head">
+      <div class="p-kicker">${s.flagship?'★ Mục trọng tâm · ':''}Tr. ${s.page}</div>
+      <h2>${s.title}</h2>
+      <p class="p-teaser">${s.teaser}</p>
+    </div>
+    <div class="p-body">
+      ${s.body}
+      ${conceptsHtml}
+      ${quotesHtml}
+      ${sigHtml}
+    </div>
+    <div class="navbtns">
+      <button class="navbtn" id="prevBtn" ${idx===0?'disabled':''}>← ${idx>0?SECTIONS[idx-1].title:''}</button>
+      <button class="navbtn" id="nextBtn" ${idx===SECTIONS.length-1?'disabled':''}>${idx<SECTIONS.length-1?SECTIONS[idx+1].title:''} →</button>
+    </div>
+  `;
+  if(idx>0) document.getElementById('prevBtn').onclick = ()=>goTo(SECTIONS[idx-1].id);
+  if(idx<SECTIONS.length-1) document.getElementById('nextBtn').onclick = ()=>goTo(SECTIONS[idx+1].id);
+}
+
+function goTo(id){
+  currentId = id;
+  buildFlow();
+  buildSidebar();
+  renderPanel();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function buildGlossary(){
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  GLOSSARY.forEach((g,i)=>{
+    const card = document.createElement('div');
+    card.className = 'flashcard';
+    card.innerHTML = `<div class="fc-inner">
+      <div class="fc-face fc-front">${g.t}</div>
+      <div class="fc-face fc-back">${g.d}</div>
+    </div>`;
+    card.onclick = ()=>card.classList.toggle('flipped');
+    grid.appendChild(card);
+  });
+}
+
+function openGlossary(){ document.getElementById('modalBg').classList.add('open'); }
+function closeGlossary(){ document.getElementById('modalBg').classList.remove('open'); }
+document.getElementById('modalBg').addEventListener('click', (e)=>{
+  if(e.target.id==='modalBg') closeGlossary();
+});
+
+buildFlow();
+buildSidebar();
+renderPanel();
+buildGlossary();
+</script>
+</body>
+</html>
